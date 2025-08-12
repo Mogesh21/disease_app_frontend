@@ -24,7 +24,7 @@ const Index = () => {
 
   const fetchImageGallery = async () => {
     try {
-      const response = await axiosInstance.get(`image-gallery/${state.id}`);
+      const response = await axiosInstance.get(`image-gallery/${state?.id}`);
       if (response.status === 200) {
         setImages(response.data.data);
       } else {
@@ -41,7 +41,7 @@ const Index = () => {
     setUpdatedData(data);
   };
   const handleDelete = async (ids) => {
-    const response = await axiosInstance.put(`image-gallery/${state.id}`, {
+    const response = await axiosInstance.put(`image-gallery/${state?.id}`, {
       ids: ids
     });
     if (response.status === 200) {
@@ -61,20 +61,23 @@ const Index = () => {
   };
 
   const handleImageChange = (e) => {
-    if (!newData && e.target.files[0]) {
-      console.log(1);
+    const image = e.target.files[0];
+    if (newData && image) {
       const types = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp'];
-      const image = e.target.files[0];
-      if (types.includes(image.type))
-        setNewData({
+      if (image.size > 5 * 1024 * 1024) {
+        notification.error({ message: 'Image must be less than 5MB' });
+      } else if (types.includes(image.type)) {
+        setNewData((prev) => ({
+          ...prev,
           image_file: image
-        });
+        }));
+      } else {
+        notification.error({ message: 'Invalid file format' });
+      }
     } else {
-      console.log(2);
-      setNewData((prev) => ({
-        ...prev,
-        image_file: e.target.files[0]
-      }));
+      setNewData({
+        image_file: image
+      });
     }
   };
 
@@ -87,14 +90,18 @@ const Index = () => {
   };
 
   const handleUpdateImageChange = (e) => {
-    if (e.target.files[0]) {
-      const types = ['image/png', 'image/jpg', 'image/jpeg'];
-      const image = e.target.files[0];
-      if (types.includes(image.type)) {
+    const image = e.target.files[0];
+    if (image) {
+      const types = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp'];
+      if (image.size > 5 * 1024 * 1024) {
+        notification.error({ message: 'Image must be less than 5MB' });
+      } else if (types.includes(image.type)) {
         setUpdatedData((prev) => ({
           ...prev,
           image_file: image
         }));
+      } else {
+        notification.error({ message: 'Invalid file format' });
       }
     }
   };
@@ -102,12 +109,13 @@ const Index = () => {
   const createNewImage = async () => {
     try {
       if (!newData.name) {
+        notification.error({ message: 'Image name is required' });
         return;
       }
       const formData = new FormData();
       formData.append('names', JSON.stringify([newData.name]));
       formData.append('images', newData.image_file);
-      const response = await axiosInstance.post(`/image-gallery/${state.id}`, formData, {
+      const response = await axiosInstance.post(`/image-gallery/${state?.id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -128,6 +136,7 @@ const Index = () => {
   const handleUpdateImage = async () => {
     try {
       if (!updatedData.name) {
+        notification.error({ message: 'Image name is required' });
         return;
       }
 
@@ -136,7 +145,7 @@ const Index = () => {
       formData.append('name', updatedData.name);
       formData.append('image', updatedData.image);
       if (updatedData.image_file) formData.append('image_file', updatedData.image_file);
-      const response = await axiosInstance.post(`/image-gallery/update/${state.id}`, formData, {
+      const response = await axiosInstance.post(`/image-gallery/update/${state?.id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -167,7 +176,7 @@ const Index = () => {
       }}
     >
       <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
-        <p style={{ fontWeight: 'bolder', fontSize: 30 }}>Image Gallery - {state.name} </p>
+        <p style={{ fontWeight: 'bolder', fontSize: 30 }}>Image Gallery - {state?.name} </p>
         {selected.length > 0 && (
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <Popconfirm
@@ -272,7 +281,7 @@ const Index = () => {
                   </label>
                 )}
                 <input
-                  maxLength={50}
+                  maxLength={30}
                   value={updatedData.name}
                   style={{
                     border: '1px solid black',

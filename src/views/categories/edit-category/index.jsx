@@ -104,7 +104,12 @@ const EditCategory = () => {
         >
           <Input />
         </Form.Item>
-        <Form.Item label="Cover Image" name="image_file" rules={[{ required: true, message: 'Please upload the image!' }]}>
+        <Form.Item
+          label="Cover Image"
+          name="image_file"
+          getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
+          rules={[{ required: true, message: 'Please upload the image!' }]}
+        >
           <Upload {...props}>
             <Button className="uploadButton">
               <UploadOutlined /> Upload

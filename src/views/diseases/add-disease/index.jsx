@@ -5,6 +5,7 @@ import axiosInstance from 'config/axiosConfig';
 import { MinusCircleOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import Ckeditor from '../../../components/Ckeditor';
 import { useWatch } from 'antd/es/form/Form';
+import { imageValidator } from 'utilities/fileValidator';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -98,10 +99,21 @@ const Index = () => {
             ))}
           </Select>
         </Form.Item>
-        <Form.Item label="Disease Name" name="name" rules={[{ required: true, message: 'disease name is required' }]}>
+        <Form.Item
+          label="Disease Name"
+          name="name"
+          rules={[
+            { required: true, message: 'disease name is required' },
+            { max: 30, message: 'Name cannot be longer than 30 characters!' }
+          ]}
+        >
           <Input />
         </Form.Item>
-        <Form.Item label="Cover Image" name="image_file" rules={[{ required: true, message: 'Please upload the image!' }]}>
+        <Form.Item
+          label="Cover Image"
+          name="image_file"
+          rules={[{ required: true, message: 'Please upload the image!' }, { validator: imageValidator }]}
+        >
           <Upload {...props}>
             <Button className="uploadButton">
               <UploadOutlined /> Upload

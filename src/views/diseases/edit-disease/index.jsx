@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Button, notification, Layout, Upload, Select, Input, Space } from 'antd';
+import { Form, Button, notification, Layout, Upload, Select, Input, Space, Popconfirm } from 'antd';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axiosInstance from 'config/axiosConfig';
 import { MinusCircleOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
@@ -58,7 +58,6 @@ const Index = () => {
     setLoading(true);
     try {
       const formData = new FormData();
-      console.log(values);
       formData.append('cat_id', values.cat_id);
       formData.append('name', values.name);
       if (fileList.length > 0 && fileList[0].originFileObj) {
@@ -113,10 +112,10 @@ const Index = () => {
           form.validateFields(['image_file']);
         }, 0);
         setFileValid(false);
-        return false;
+        return Upload.LIST_IGNORE;
       }
       setFileValid(true);
-      return Upload.LIST_IGNORE;
+      return false;
     }
   };
 
@@ -136,7 +135,12 @@ const Index = () => {
         <Form.Item label="Disease Name" name="name" rules={[{ required: true, message: 'disease name is required' }]}>
           <Input />
         </Form.Item>
-        <Form.Item label="Cover Image" name="image_file" rules={[{ required: true, message: 'Please upload the image!' }]}>
+        <Form.Item
+          label="Cover Image"
+          name="image_file"
+          getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
+          rules={[{ required: true, message: 'Please upload the image!' }]}
+        >
           <Upload {...props}>
             <Button className="uploadButton">
               <UploadOutlined /> Upload
@@ -183,10 +187,11 @@ const Index = () => {
                         data={form.getFieldValue(['info', name, 'content']) || ''}
                       />
                     </Form.Item>
-
-                    <Button danger onClick={() => remove(name)} icon={<MinusCircleOutlined />}>
-                      Delete
-                    </Button>
+                    <Popconfirm title="Are you sure to delete?" onConfirm={() => remove(name)}>
+                      <Button danger icon={<MinusCircleOutlined />}>
+                        Delete
+                      </Button>
+                    </Popconfirm>
                   </Space>
                 ))}
                 <Form.Item>

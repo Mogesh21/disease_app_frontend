@@ -63,30 +63,47 @@ const Index = () => {
   };
 
   const handleVideoChange = (e) => {
-    if (!newData && e.target.files[0]) {
-      const types = ['video/png', 'video/jpg', 'video/jpeg'];
-      const video = e.target.files[0];
-      if (types.includes(video.type))
-        setNewData({
+    const video = e.target.files[0];
+    if (video) {
+      const types = ['video/mp4', 'video/webm', 'video/ogg', 'video/quicktime'];
+      if (video.size > 20 * 1024 * 1024) {
+        notification.error({ message: 'Video must be less than 20MB' });
+      } else if (types.includes(video.type)) {
+        setNewData((prev) => ({
+          ...prev,
           video_file: video
-        });
-    } else {
-      setNewData((prev) => ({
-        ...prev,
-        video_file: e.target.files[0]
-      }));
+        }));
+      } else {
+        notification.error({ message: 'Invalid file format' });
+      }
     }
   };
 
+  useEffect(() => {
+    console.log(newData);
+  }, [newData]);
+
   const handleImageChange = (e) => {
-    if (e.target.files[0]) {
+    const image = e.target.files[0];
+    if (newData && image) {
       const types = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp'];
-      const image = e.target.files[0];
-      if (types.includes(image.type)) {
+      if (image.size > 5 * 1024 * 1024) {
+        notification.error({ message: 'Image must be less than 5MB' });
+      } else if (types.includes(image.type)) {
         setNewData((prev) => ({
           ...prev,
           image_file: image
         }));
+      } else {
+        notification.error({ message: 'Invalid file format' });
+      }
+    } else {
+      if (image.size > 5 * 1024 * 1024) {
+        notification.error({ message: 'Image must be less than 5MB' });
+      } else {
+        setNewData({
+          image_file: image
+        });
       }
     }
   };
@@ -100,27 +117,35 @@ const Index = () => {
   };
 
   const handleUpdateVideoChange = (e) => {
-    if (e.target.files[0]) {
+    const video = e.target.files[0];
+    if (video) {
       const types = ['video/mp4', 'video/webm', 'video/ogg', 'video/quicktime'];
-      const video = e.target.files[0];
-      if (types.includes(video.type)) {
+      if (video.size > 20 * 1024 * 1024) {
+        notification.error({ message: 'Video must be less than 20MB' });
+      } else if (types.includes(video.type)) {
         setUpdatedData((prev) => ({
           ...prev,
           video_file: video
         }));
+      } else {
+        notification.error({ message: 'Invalid file format' });
       }
     }
   };
 
   const handleUpdateImageChange = (e) => {
-    if (e.target.files[0]) {
-      const types = ['image/png', 'image/jpg', 'image/jpeg'];
-      const image = e.target.files[0];
-      if (types.includes(image.type)) {
+    const image = e.target.files[0];
+    if (image) {
+      const types = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp'];
+      if (image.size > 5 * 1024 * 1024) {
+        notification.error({ message: 'Image must be less than 5MB' });
+      } else if (types.includes(image.type)) {
         setUpdatedData((prev) => ({
           ...prev,
           image_file: image
         }));
+      } else {
+        notification.error({ message: 'Invalid file format' });
       }
     }
   };
@@ -473,7 +498,7 @@ const Index = () => {
                           />
                         )}
                         <input name="video_upload" id="video_upload" onChange={handleVideoChange} hidden type="file" accept="video/*" />
-                        <PlusCircleFilled style={{ fontSize: 35, color: '#ffffff' }} />
+                        <PlusCircleFilled style={{ fontSize: 35, color: '#ffffffff' }} />
                       </label>
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>

@@ -3,6 +3,7 @@ import { Form, Input, Button, notification, Layout, Upload } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from 'config/axiosConfig';
 import { UploadOutlined } from '@ant-design/icons';
+import { imageValidator } from 'utilities/fileValidator';
 
 const AddCategory = () => {
   const navigate = useNavigate();
@@ -73,7 +74,11 @@ const AddCategory = () => {
         >
           <Input />
         </Form.Item>
-        <Form.Item label="Cover Image" name="image_file" rules={[{ required: true, message: 'Please upload the image!' }]}>
+        <Form.Item
+          label="Cover Image"
+          name="image_file"
+          rules={[{ required: true, message: 'Please upload the image!' }, { validator: imageValidator }]}
+        >
           <Upload {...props}>
             <Button className="uploadButton">
               <UploadOutlined /> Upload

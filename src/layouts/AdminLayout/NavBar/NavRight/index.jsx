@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { ListGroup, Dropdown } from 'react-bootstrap';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import ChatList from './ChatList';
 import { logOut } from 'store/authSlice';
@@ -33,7 +33,7 @@ const NavRight = () => {
       <ListGroup as="ul" bsPrefix=" " className="navbar-nav ml-auto" id="navbar-right">
         <ListGroup.Item as="li" bsPrefix=" ">
           <Dropdown align={'end'} className="drp-user">
-            <Dropdown.Toggle as={Link} variant="link" to="#" id="dropdown-basic">
+            <Dropdown.Toggle style={{ backgroundColor: 'white' }} id="dropdown-basic">
               <i className="icon feather icon-settings" style={{ width: '24px', height: '24px', display: 'inline-block' }} />
             </Dropdown.Toggle>
             <Dropdown.Menu align="end" className="profile-notification">
