@@ -30,6 +30,10 @@ const Index = () => {
   }, [infoList]);
 
   const onFinish = async (values) => {
+    // const info = values.info.map((info) => ({
+    //   ...info,
+    //   content: addInterFontLink(info.content)
+    // }));
     if (error) return;
     setLoading(true);
     try {

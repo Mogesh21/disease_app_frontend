@@ -161,19 +161,19 @@ const Index = () => {
           <div className="graph-container">
             <PieChart
               data={filteredReports || []}
-              title="Disease Id"
+              title="Diseases"
               type_id={1}
               colors={['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#00BFFF', '#E91E63']}
             />
             <PieChart
               data={filteredReports || []}
-              title="Image Id"
+              title="Images"
               type_id={2}
               colors={['#4BC0C0', '#9966FF', '#00BFFF', '#E91E63', '#FF6384', '#36A2EB', '#FFCE56']}
             />
             <PieChart
               data={filteredReports || []}
-              title="Video Id"
+              title="Videos"
               type_id={3}
               colors={['#00BFFF', '#E91E63', '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF']}
             />

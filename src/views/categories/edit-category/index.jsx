@@ -56,10 +56,14 @@ const EditCategory = () => {
       }
     } catch (err) {
       console.log(err);
-      notification.error({
-        message: 'Error Occured....',
-        description: 'Unable to update! Please try again...'
-      });
+      if (err.response && err.response.status === 413) {
+        notification.error({ message: 'File size must be less than 200KB' });
+      } else {
+        notification.error({
+          message: 'Error Occured....',
+          description: 'Unable to update! Please try again...'
+        });
+      }
     } finally {
       setLoading(false);
     }

@@ -31,6 +31,7 @@ import {
 import 'ckeditor5/ckeditor5.css';
 const LICENSE_KEY = 'GPL';
 
+// eslint-disable-next-line react/prop-types
 export default function Ckeditor({ value, onChange }) {
   const [isLayoutReady, setIsLayoutReady] = useState(false);
 
@@ -47,6 +48,10 @@ export default function Ckeditor({ value, onChange }) {
 
     return {
       editorConfig: {
+        fontFamily: {
+          options: ['default', 'Inter, sans-serif'],
+          default: 'Inter, sans-serif'
+        },
         toolbar: {
           items: [
             'undo',

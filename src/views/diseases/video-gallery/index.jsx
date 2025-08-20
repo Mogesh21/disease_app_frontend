@@ -13,6 +13,7 @@ const Index = () => {
   const [newData, setNewData] = useState(null);
   const [updatedData, setUpdatedData] = useState(null);
   const [selected, setSelected] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (state) {
@@ -65,9 +66,10 @@ const Index = () => {
   const handleVideoChange = (e) => {
     const video = e.target.files[0];
     if (video) {
+      console.log(video);
       const types = ['video/mp4', 'video/webm', 'video/ogg', 'video/quicktime'];
-      if (video.size > 20 * 1024 * 1024) {
-        notification.error({ message: 'Video must be less than 20MB' });
+      if (video.size > 10 * 1024 * 1024) {
+        notification.error({ message: 'Video must be less than 10MB' });
       } else if (types.includes(video.type)) {
         setNewData((prev) => ({
           ...prev,
@@ -78,10 +80,6 @@ const Index = () => {
       }
     }
   };
-
-  useEffect(() => {
-    console.log(newData);
-  }, [newData]);
 
   const handleImageChange = (e) => {
     const image = e.target.files[0];
@@ -120,8 +118,8 @@ const Index = () => {
     const video = e.target.files[0];
     if (video) {
       const types = ['video/mp4', 'video/webm', 'video/ogg', 'video/quicktime'];
-      if (video.size > 20 * 1024 * 1024) {
-        notification.error({ message: 'Video must be less than 20MB' });
+      if (video.size > 10 * 1024 * 1024) {
+        notification.error({ message: 'Video must be less than 10MB' });
       } else if (types.includes(video.type)) {
         setUpdatedData((prev) => ({
           ...prev,
@@ -138,7 +136,7 @@ const Index = () => {
     if (image) {
       const types = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp'];
       if (image.size > 5 * 1024 * 1024) {
-        notification.error({ message: 'Image must be less than 5MB' });
+        notification.error({ message: 'Image must be less than 200KB' });
       } else if (types.includes(image.type)) {
         setUpdatedData((prev) => ({
           ...prev,
@@ -151,6 +149,7 @@ const Index = () => {
   };
 
   const createNewVideo = async () => {
+    setLoading(true);
     try {
       if (!newData.name) {
         notification.error({ message: 'Name is required' });
@@ -185,10 +184,13 @@ const Index = () => {
     } catch (err) {
       console.log(err);
       notification.error({ message: 'Error Occured' });
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleUpdateVideo = async () => {
+    setLoading(true);
     try {
       if (!updatedData.name) {
         notification.error({ message: 'Name is required' });
@@ -217,7 +219,13 @@ const Index = () => {
       }
     } catch (err) {
       console.log(err);
-      notification.error({ message: 'Error Occured' });
+      if (err.response && err.response.status === 413) {
+        notification.error({ message: 'File size must be less than 10MB' });
+      } else {
+        notification.error({ message: 'Error Occured' });
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -404,12 +412,13 @@ const Index = () => {
                     <Button type="primary" onClick={() => setUpdatedData(null)} style={{ width: '100%' }} danger>
                       <CloseOutlined />
                     </Button>
-                    <Button type="primary" onClick={handleUpdateVideo} style={{ width: '100%' }}>
+                    <Button type="primary" loading={loading} onClick={handleUpdateVideo} style={{ width: '100%' }}>
                       Update
                     </Button>
                   </div>
                 </div>
-                <div style={{ width: '100%', paddingInline: 10, display: 'flex', flexDirection: 'column', overflow: 'hidden', gap: 10 }}>
+                <div style={{ width: '100%', paddingInline: 10, display: 'flex', flexDirection: 'column', overflow: 'hidden', gap: 5 }}>
+                  <span style={{ fontWeight: 700 }}>Name:</span>
                   <Input
                     style={{
                       fontSize: 20,
@@ -421,7 +430,7 @@ const Index = () => {
                     value={updatedData.name}
                     onChange={(e) => handleUpdateTextChange(e, 'name')}
                   />
-
+                  <span style={{ fontWeight: 700 }}>Description:</span>
                   <Input.TextArea
                     style={{ wordBreak: 'break-word', height: '100%', overflow: 'hidden', textOverflow: 'ellipsis' }}
                     value={updatedData.description}
@@ -540,12 +549,13 @@ const Index = () => {
                     <Button type="primary" onClick={() => setNewData(null)} style={{ width: '100%' }} danger>
                       <CloseOutlined />
                     </Button>
-                    <Button type="primary" onClick={createNewVideo} style={{ width: '100%' }}>
-                      Create
+                    <Button type="primary" loading={loading} onClick={createNewVideo} style={{ width: '100%' }}>
+                      Create Video
                     </Button>
                   </div>
                 </div>
-                <div style={{ width: '100%', paddingInline: 10, display: 'flex', flexDirection: 'column', overflow: 'hidden', gap: 10 }}>
+                <div style={{ width: '100%', paddingInline: 10, display: 'flex', flexDirection: 'column', overflow: 'hidden', gap: 5 }}>
+                  <span style={{ fontWeight: 700 }}>Name :</span>
                   <Input
                     style={{
                       fontSize: 20,
@@ -557,7 +567,7 @@ const Index = () => {
                     value={newData.name || ''}
                     onChange={(e) => handleTextChange(e, 'name')}
                   />
-
+                  <span style={{ fontWeight: 700 }}>Description :</span>
                   <Input.TextArea
                     style={{ wordBreak: 'break-word', height: '100%', overflow: 'hidden', textOverflow: 'ellipsis' }}
                     value={newData.description || ''}

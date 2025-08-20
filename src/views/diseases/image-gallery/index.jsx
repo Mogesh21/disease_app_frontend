@@ -12,6 +12,7 @@ const Index = () => {
   const [newData, setNewData] = useState(null);
   const [updatedData, setUpdatedData] = useState(null);
   const [selected, setSelected] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (state) {
@@ -64,8 +65,8 @@ const Index = () => {
     const image = e.target.files[0];
     if (newData && image) {
       const types = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp'];
-      if (image.size > 5 * 1024 * 1024) {
-        notification.error({ message: 'Image must be less than 5MB' });
+      if (image.size > 200 * 1024) {
+        notification.error({ message: 'Image must be less than 200KB' });
       } else if (types.includes(image.type)) {
         setNewData((prev) => ({
           ...prev,
@@ -93,8 +94,8 @@ const Index = () => {
     const image = e.target.files[0];
     if (image) {
       const types = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp'];
-      if (image.size > 5 * 1024 * 1024) {
-        notification.error({ message: 'Image must be less than 5MB' });
+      if (image.size > 200 * 1024) {
+        notification.error({ message: 'Image must be less than 200KB' });
       } else if (types.includes(image.type)) {
         setUpdatedData((prev) => ({
           ...prev,
@@ -107,6 +108,7 @@ const Index = () => {
   };
 
   const createNewImage = async () => {
+    setLoading(true);
     try {
       if (!newData.name) {
         notification.error({ message: 'Image name is required' });
@@ -129,11 +131,16 @@ const Index = () => {
       }
     } catch (err) {
       console.log(err);
-      notification.error({ message: 'Error Occured' });
+      if (err.response && err.response.status === 413) {
+        notification.error({ message: 'File size must be less than 200KB' });
+      } else notification.error({ message: 'Error Occured' });
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleUpdateImage = async () => {
+    setLoading(true);
     try {
       if (!updatedData.name) {
         notification.error({ message: 'Image name is required' });
@@ -159,7 +166,11 @@ const Index = () => {
       }
     } catch (err) {
       console.log(err);
-      notification.error({ message: 'Error Occured' });
+      if (err.response && err.response.status === 413) {
+        notification.error({ message: 'File size must be less than 200KB' });
+      } else notification.error({ message: 'Error Occured' });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -297,7 +308,7 @@ const Index = () => {
                   <Button type="primary" onClick={() => setUpdatedData(null)} style={{ width: '100%' }} danger>
                     <CloseOutlined />
                   </Button>
-                  <Button type="primary" onClick={handleUpdateImage} style={{ width: '100%' }}>
+                  <Button type="primary" loading={loading} onClick={handleUpdateImage} style={{ width: '100%' }}>
                     Update
                   </Button>
                 </div>
@@ -355,7 +366,7 @@ const Index = () => {
                   <Button type="primary" onClick={() => setNewData(null)} style={{ width: '100%' }} danger>
                     <CloseOutlined />
                   </Button>
-                  <Button type="primary" onClick={createNewImage} style={{ width: '100%' }}>
+                  <Button type="primary" loading={loading} onClick={createNewImage} style={{ width: '100%' }}>
                     Create
                   </Button>
                 </div>

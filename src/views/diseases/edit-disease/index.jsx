@@ -132,7 +132,14 @@ const Index = () => {
             ))}
           </Select>
         </Form.Item>
-        <Form.Item label="Disease Name" name="name" rules={[{ required: true, message: 'disease name is required' }]}>
+        <Form.Item
+          label="Disease Name"
+          name="name"
+          rules={[
+            { required: true, message: 'disease name is required' },
+            { max: 30, message: 'Name cannot be longer than 30 characters!' }
+          ]}
+        >
           <Input />
         </Form.Item>
         <Form.Item
